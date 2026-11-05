@@ -1,0 +1,232 @@
+.template-editor-wrapper {
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.content-header h2 {
+  font-size: 1.25rem;
+  color: #000000;
+  font-weight: 400;
+  margin-bottom: 1rem;
+  font-family: sans-serif;
+}
+
+.editor-card-container {
+  background-color: #d1d5db;
+  border-radius: 4px;
+  padding: 2.5rem 2rem;
+  flex-grow: 1;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+}
+
+.editor-white-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 2rem 2.5rem;
+  width: 100%;
+  max-width: 850px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+}
+
+.editor-form-title {
+  text-align: center;
+  font-size: 1.35rem;
+  color: #000000;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+/* Form Fields Setup */
+.form-row-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.inline-field {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.inline-field label {
+  font-weight: 700;
+  color: #000000;
+  font-size: 0.9rem;
+  width: 130px;
+  text-align: right;
+}
+
+.input-text-long {
+  flex-grow: 1;
+  max-width: 450px;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #374151;
+  border-radius: 2px;
+  font-size: 0.88rem;
+}
+
+.input-number-short {
+  width: 60px;
+  padding: 0.45rem 0.5rem;
+  border: 1px solid #374151;
+  border-radius: 2px;
+  font-size: 0.88rem;
+  text-align: center;
+}
+
+.input-with-unit {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #000000;
+}
+
+/* Section Layout Inner Box */
+.section-layout-container {
+  border: 1px solid #9ca3af;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.section-layout-title {
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 1.5rem;
+}
+
+/* Section Layout Grid / Table */
+.section-table-header {
+  display: grid;
+  grid-template-columns: 1.2fr 1.5fr 1.2fr 0.6fr;
+  gap: 1rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #374151;
+  padding-bottom: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.section-table-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section-table-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1.5fr 1.2fr 0.6fr;
+  gap: 1rem;
+  align-items: center;
+}
+
+.col-section input,
+.col-marks input,
+.col-type select {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid #374151;
+  border-radius: 2px;
+  font-size: 0.85rem;
+  box-sizing: border-box;
+}
+
+.col-type select {
+  background-color: #ffffff;
+  cursor: pointer;
+}
+
+.col-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-delete-section {
+  background-color: #b91c1c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: opacity 0.2s;
+}
+
+.btn-delete-section:hover {
+  opacity: 0.85;
+}
+
+/* Add Section Button */
+.add-section-row {
+  margin-top: 1.25rem;
+  padding-left: 0.5rem;
+}
+
+.btn-add-section {
+  background-color: #2b3a4a;
+  color: white;
+  border: none;
+  padding: 0.45rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btn-add-section:hover {
+  background-color: #1e293b;
+}
+
+/* Bottom Actions */
+.editor-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.btn-editor-cancel {
+  background-color: #262626;
+  color: white;
+  border: none;
+  padding: 0.55rem 1.25rem;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.btn-editor-save {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.55rem 1.25rem;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.btn-editor-save:hover {
+  background-color: #1d4ed8;
+}

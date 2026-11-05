@@ -1,0 +1,170 @@
+.hod-content-wrapper {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.content-header h2 {
+  font-size: 1.25rem;
+  color: #334155;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-card-container {
+  background-color: #e2e8f0;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Stats Row */
+.hod-stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.hod-stat-card {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.hod-stat-card h4 {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.hod-stat-number {
+  font-size: 2.25rem;
+  font-weight: bold;
+  color: #1e293b;
+  margin: 0;
+}
+
+/* Table Card Section */
+.hod-table-card {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.hod-table-card h3 {
+  font-size: 1.15rem;
+  color: #1e293b;
+  margin-bottom: 1.25rem;
+  font-weight: bold;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.hod-drafts-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.hod-drafts-table th {
+  background-color: #f8fafc;
+  color: #475569;
+  padding: 0.85rem 1rem;
+  border-bottom: 2px solid #e2e8f0;
+  font-weight: 600;
+}
+
+.hod-drafts-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  vertical-align: middle;
+}
+
+.title-cell {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.status-badge.pending-review {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.status-badge.approved {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.status-badge.changes-requested {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Action Buttons */
+.action-cell {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.action-cell button {
+  border: none;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-review {
+  background-color: #1e293b;
+  color: white;
+}
+
+.btn-review:hover {
+  background-color: #334155;
+}
+
+.btn-approve {
+  background-color: #16a34a;
+  color: white;
+}
+
+.btn-approve:hover {
+  background-color: #15803d;
+}
+
+.btn-reject {
+  background-color: #dc2626;
+  color: white;
+}
+
+.btn-reject:hover {
+  background-color: #b91c1c;
+}
