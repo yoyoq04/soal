@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
@@ -43,6 +43,19 @@ class UserRegister(BaseModel):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
+# --- API Endpoints ---
+
+class UserUpdateModel(BaseModel):
+    username: Optional[str] = None
+    email: Optional[str] = None
+    password: Optional[str] = None
+
+class ExamTemplateModel(BaseModel):
+    user_id: int
+    template_name: str
+    section_layout: Optional[str] = None
+    total_marks: Optional[int] = 100
 
 
 # --- General Routes ---
@@ -117,6 +130,66 @@ def login_user(credentials: UserLogin):
         }
     }
 
+# --- User Management Routes ---
+@app.get("/users/{user_id}")
+def get_user_profile(user_id: int):
+    # Query using user_id instead of id
+    response = supabase.table("User").select("*").eq("user_id", user_id).execute()
+    if not response.data:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    user = response.data[0]
+    # Map user_id to id for frontend compatibility
+    if "user_id" in user and "id" not in user:
+        user["id"] = user["user_id"]
+    return user
+
+@app.put("/users/{user_id}")
+def update_user_profile(user_id: int, user_data: UserUpdateModel):
+    update_dict = {k: v for k, v in user_data.dict().items() if v is not None}
+    
+    if not update_dict:
+        raise HTTPException(status_code=400, detail="No update data provided")
+
+    # Update using user_id
+    response = supabase.table("User").update(update_dict).eq("user_id", user_id).execute()
+    if not response.data:
+        raise HTTPException(status_code=400, detail="Failed to update user profile")
+    return {"message": "Profile updated successfully", "data": response.data}
+
+@app.delete("/users/{user_id}")
+def delete_user_account(user_id: int):
+    # Delete using user_id
+    response = supabase.table("User").delete().eq("user_id", user_id).execute()
+    return {"message": "Account deleted successfully"}
+
+# --- Exam Template Routes ---
+@app.get("/exam-templates")
+def get_exam_templates(user_id: Optional[str] = None):
+    query = supabase.table("Exam_Template").select("*")
+    if user_id:
+        query = query.eq("user_id", user_id)
+    response = query.execute()
+    return response.data
+
+@app.post("/exam-templates")
+def create_exam_template(template: ExamTemplateModel):
+    response = supabase.table("Exam_Template").insert(template.dict()).execute()
+    if not response.data:
+        raise HTTPException(status_code=400, detail="Failed to create exam template")
+    return {"message": "Template created successfully", "data": response.data}
+
+@app.put("/exam-templates/{template_id}")
+def update_exam_template(template_id: str, template: ExamTemplateModel):
+    response = supabase.table("Exam_Template").update(template.dict()).eq("template_id", template_id).execute()
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Template not found or update failed")
+    return {"message": "Template updated successfully", "data": response.data}
+
+@app.delete("/exam-templates/{template_id}")
+def delete_exam_template(template_id: str):
+    response = supabase.table("Exam_Template").delete().eq("template_id", template_id).execute()
+    return {"message": "Template deleted successfully"}
 
 # --- Exam Project & Comment Routes ---
 

@@ -23,7 +23,16 @@ export const LoginPage: React.FC<LoginPageProps> = ({
 
     try {
       const res = await loginApi({ email, password });
-      onLoginSuccess(res.user);
+      const user = res.user;
+
+      // Save the user ID and object to localStorage so UserProfile can read it
+      const userId = user.user_id || user.id;
+      if (userId) {
+        localStorage.setItem("user_id", userId.toString());
+      }
+      localStorage.setItem("currentUser", JSON.stringify(user));
+
+      onLoginSuccess(user);
     } catch (err: any) {
       const msg = err.response?.data?.detail || 'Login failed. Please try again.';
       setErrorMsg(msg);

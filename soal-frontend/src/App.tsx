@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { MainLayout } from './components/MainLayout';
+import { UserProfile as UserProfilePage } from './pages/UserProfile';
 import { TeacherDashboard } from './pages/TeacherDashboard';
 import { TeacherExamProjects } from './pages/TeacherExamProjects';
 import { ExamCreatorWorkspace } from './pages/ExamCreatorWorkspace';
@@ -76,6 +77,8 @@ function App() {
               />
             )
           )}
+
+          {activeTab === 'profile' && <UserProfilePage />}
 
           {activeTab === 'projects' && (
             <TeacherExamProjects

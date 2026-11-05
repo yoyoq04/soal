@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+/// <reference types="vite/client" />
+import React, { useState, useEffect } from 'react';
 import { TemplateEditor, type TemplateData } from './TemplateEditor';
 import './TeacherExamProjects.css';
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
 
 interface Template {
   id: number;
@@ -42,6 +45,29 @@ interface TeacherExamProjectsProps {
   onSelectTemplate?: (templateName: string) => void;
 }
 
+// Helper to safely extract user ID whether stored as a string or inside a JSON object
+const getUserId = (): number => {
+  const rawId = localStorage.getItem("user_id");
+  if (rawId) {
+    const parsed = parseInt(rawId, 10);
+    if (!isNaN(parsed)) return parsed;
+  }
+
+  const userObjStr = localStorage.getItem("user") || localStorage.getItem("currentUser");
+  if (userObjStr) {
+    try {
+      const parsedUser = JSON.parse(userObjStr);
+      if (parsedUser?.id) return parseInt(parsedUser.id, 10);
+      if (parsedUser?.user_id) return parseInt(parsedUser.user_id, 10);
+    } catch {
+      const parsedNum = parseInt(userObjStr, 10);
+      if (!isNaN(parsedNum)) return parsedNum;
+    }
+  }
+
+  return 1; // Fallback default user ID
+};
+
 export const TeacherExamProjects: React.FC<TeacherExamProjectsProps> = ({
   onSelectTemplate,
 }) => {
@@ -51,23 +77,56 @@ export const TeacherExamProjects: React.FC<TeacherExamProjectsProps> = ({
   const [activeView, setActiveView] = useState<'list' | 'edit' | 'create'>('list');
   const [editingTemplate, setEditingTemplate] = useState<TemplateData | null>(null);
 
+  // Fetch templates specific to the logged-in user from FastAPI backend on load
+  useEffect(() => {
+    const currentUserId = getUserId();
+    
+    fetch(`${API_BASE}/exam-templates?user_id=${currentUserId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          const mappedTemplates: Template[] = data.map((item: any) => ({
+            id: item.template_id,
+            name: item.template_name,
+            totalMarks: item.total_marks || 100,
+            duration: '2 hour',
+            structure: item.section_layout || 'Custom Layout',
+            isDefault: false,
+          }));
+          setTemplates([...DEFAULT_TEMPLATES, ...mappedTemplates]);
+        } else {
+          setTemplates(DEFAULT_TEMPLATES);
+        }
+      })
+      .catch((err) => console.error("Failed to load templates from database:", err));
+  }, []);
+
   const handleSelectTemplate = (tmpl: Template) => {
     if (onSelectTemplate) {
       onSelectTemplate(tmpl.name);
     }
   };
 
-  const handleDeleteTemplate = (id: number) => {
+  const handleDeleteTemplate = async (id: number) => {
     const tmpl = templates.find((t) => t.id === id);
     if (tmpl?.isDefault) return;
+
     if (window.confirm('Are you sure you want to delete this custom template?')) {
-      setTemplates(templates.filter((t) => t.id !== id));
+      try {
+        const res = await fetch(`${API_BASE}/exam-templates/${id}`, {
+          method: 'DELETE',
+        });
+        if (!res.ok) throw new Error('Failed to delete on server');
+        setTemplates(templates.filter((t) => t.id !== id));
+      } catch (err) {
+        console.error("Error deleting template:", err);
+      }
     }
   };
 
   const handleOpenEdit = (tmpl: Template) => {
     setEditingTemplate({
-      id: tmpl.id,
+      id: tmpl.isDefault ? undefined : tmpl.id,
       name: tmpl.name,
       totalMarks: tmpl.totalMarks,
       duration: parseFloat(tmpl.duration),
@@ -85,35 +144,70 @@ export const TeacherExamProjects: React.FC<TeacherExamProjectsProps> = ({
     setActiveView('create');
   };
 
-  const handleSaveTemplate = (savedData: TemplateData) => {
+  const handleSaveTemplate = async (savedData: TemplateData) => {
     const sectionSummary = savedData.sections
       .map((s) => `${s.sectionName} (${s.sectionMarks}m)`)
       .join(', ');
 
+    const currentUserId = getUserId();
+
+    const payload = {
+      template_name: savedData.name,
+      section_layout: sectionSummary,
+      total_marks: savedData.totalMarks,
+      user_id: currentUserId,
+    };
+
     if (activeView === 'edit' && savedData.id) {
-      setTemplates(
-        templates.map((t) =>
-          t.id === savedData.id
-            ? {
-                ...t,
-                name: savedData.name,
-                totalMarks: savedData.totalMarks,
-                duration: `${savedData.duration} hour`,
-                structure: sectionSummary,
-              }
-            : t
-        )
-      );
+      try {
+        const res = await fetch(`${API_BASE}/exam-templates/${savedData.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) {
+          setTemplates(
+            templates.map((t) =>
+              t.id === Number(savedData.id)
+                ? {
+                    ...t,
+                    name: savedData.name,
+                    totalMarks: savedData.totalMarks,
+                    duration: `${savedData.duration} hour`,
+                    structure: sectionSummary,
+                  }
+                : t
+            )
+          );
+        }
+      } catch (err) {
+        console.error("Error updating template:", err);
+      }
     } else {
-      const newTmpl: Template = {
-        id: Date.now(),
-        name: savedData.name,
-        totalMarks: savedData.totalMarks,
-        duration: `${savedData.duration} hour`,
-        structure: sectionSummary,
-        isDefault: false,
-      };
-      setTemplates([...templates, newTmpl]);
+      try {
+        const res = await fetch(`${API_BASE}/exam-templates`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const result = await res.json();
+        if (res.ok) {
+          const newItem = result.data ? result.data[0] : result;
+          if (newItem && newItem.template_id) {
+            const newTmpl: Template = {
+              id: newItem.template_id,
+              name: newItem.template_name,
+              totalMarks: newItem.total_marks,
+              duration: `${savedData.duration} hour`,
+              structure: newItem.section_layout || sectionSummary,
+              isDefault: false,
+            };
+            setTemplates([...templates, newTmpl]);
+          }
+        }
+      } catch (err) {
+        console.error("Error creating template:", err);
+      }
     }
 
     setActiveView('list');

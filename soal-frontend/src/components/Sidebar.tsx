@@ -24,7 +24,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <h2>SOAL</h2>
         </div>
 
-        <div className="user-profile-box">
+        <div 
+          className={`user-profile-box ${activeTab === 'profile' ? 'active' : ''}`}
+          onClick={() => onNavigateTab('profile')}
+          style={{ cursor: 'pointer' }}
+          title="View Profile Settings"
+        >
           <p className="user-name">{currentUser?.username || 'User'}</p>
           <span className="user-role">{isHod ? 'Head of Department' : 'Teacher'}</span>
         </div>
